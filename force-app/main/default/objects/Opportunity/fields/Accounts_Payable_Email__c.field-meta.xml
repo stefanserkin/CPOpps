@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Accounts_Payable_Email__c</fullName>
+    <externalId>false</externalId>
+    <formula>CASE(
+  MID(Account.DBN__c , 3, 1), 
+  &quot;M&quot;, &quot;apmanhattan@doe.gov&quot;, 
+  &quot;K&quot;, &quot;apbrooklyn@doe.gov&quot;, 
+  &quot;X&quot;, &quot;apbronx@doe.gov&quot;, 
+  &quot;Q&quot;, &quot;apqueens@doe.gov&quot;, 
+  &quot;S&quot;, &quot;apstatenisland@doe.gov&quot;, 
+  &quot;unknown&quot;
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Accounts Payable Email</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

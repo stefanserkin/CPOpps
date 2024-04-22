@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Community_Programs</fullName>
+    <active>true</active>
+    <businessProcess>Community Programs</businessProcess>
+    <description>The agreement process between Community Programs and its many external partners, such as schools and the DOE</description>
+    <label>Community Programs</label>
+    <picklistValues>
+        <picklist>ForecastCategoryName</picklist>
+        <values>
+            <fullName>Best Case</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Commit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Omitted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pipeline</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>LeadSource</picklist>
+        <values>
+            <fullName>Asphalt Green Non-Member Participant</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Day Pass</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email Inquiry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Guest Visit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Membership Commitment Decision</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Online</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Phone Inquiry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Social Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Walk-in</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Word of Mouth</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type</picklist>
+        <values>
+            <fullName>Existing Funding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New Funding</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

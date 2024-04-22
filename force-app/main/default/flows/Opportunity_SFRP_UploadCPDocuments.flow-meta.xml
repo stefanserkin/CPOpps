@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <assignments>
+        <name>Set_Current_Stage_Sort_Order</name>
+        <label>Set Current Stage Sort Order</label>
+        <locationX>270</locationX>
+        <locationY>782</locationY>
+        <assignmentItems>
+            <assignToReference>curStageSortOrder</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_through_Current_Stage.SortOrder</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_through_Current_Stage</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Set_Next_Stage_Sort_Order</name>
+        <label>Set Next Stage Sort Order</label>
+        <locationX>270</locationX>
+        <locationY>1082</locationY>
+        <assignmentItems>
+            <assignToReference>nextStageSortOrder</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_through_Selected_Next_Stages.SortOrder</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_through_Selected_Next_Stages</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Set_Opportunity_Stage</name>
+        <label>Set Opportunity Stage</label>
+        <locationX>50</locationX>
+        <locationY>1382</locationY>
+        <assignmentItems>
+            <assignToReference>recordId.StageName</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>strFmlSelectedNextStage</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Opportunity_Stage</targetReference>
+        </connector>
+    </assignments>
+    <choices>
+        <name>choiceLetterOfAgreement</name>
+        <choiceText>Letter of Agreement</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Letter of Agreement</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>choicePurchaseOrder</name>
+        <choiceText>Purchase Order</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Purchase Order</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>choiceWorkOrder</name>
+        <choiceText>Work Order</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Work Order</stringValue>
+        </value>
+    </choices>
+    <collectionProcessors>
+        <name>Filter_to_Current_Stage</name>
+        <elementSubtype>FilterCollectionProcessor</elementSubtype>
+        <label>Filter to Current Stage</label>
+        <locationX>182</locationX>
+        <locationY>458</locationY>
+        <assignNextValueToReference>currentItem_Filter_to_Current_Stage</assignNextValueToReference>
+        <collectionProcessorType>FilterCollectionProcessor</collectionProcessorType>
+        <collectionReference>Get_Opportunity_Stages</collectionReference>
+        <conditionLogic>and</conditionLogic>
+        <conditions>
+            <leftValueReference>currentItem_Filter_to_Current_Stage.MasterLabel</leftValueReference>
+            <operator>EqualTo</operator>
+            <rightValue>
+                <elementReference>recordId.StageName</elementReference>
+            </rightValue>
+        </conditions>
+        <connector>
+            <targetReference>Filter_to_Selected_Next_Stage</targetReference>
+        </connector>
+    </collectionProcessors>
+    <collectionProcessors>
+        <name>Filter_to_Selected_Next_Stage</name>
+        <elementSubtype>FilterCollectionProcessor</elementSubtype>
+        <label>Filter to Selected Next Stage</label>
+        <locationX>182</locationX>
+        <locationY>566</locationY>
+        <assignNextValueToReference>currentItem_Filter_to_Selected_Next_Stage</assignNextValueToReference>
+        <collectionProcessorType>FilterCollectionProcessor</collectionProcessorType>
+        <collectionReference>Get_Opportunity_Stages</collectionReference>
+        <conditionLogic>and</conditionLogic>
+        <conditions>
+            <leftValueReference>currentItem_Filter_to_Selected_Next_Stage.MasterLabel</leftValueReference>
+            <operator>EqualTo</operator>
+            <rightValue>
+                <elementReference>strFmlSelectedNextStage</elementReference>
+            </rightValue>
+        </conditions>
+        <connector>
+            <targetReference>Loop_through_Current_Stage</targetReference>
+        </connector>
+    </collectionProcessors>
+    <decisions>
+        <name>Check_for_Advanced_Progress</name>
+        <label>Check for Advanced Progress</label>
+        <locationX>182</locationX>
+        <locationY>1274</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Current_Stage_is_Less_Than_Next_Stage</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>curStageSortOrder</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>nextStageSortOrder</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>curStageSortOrder</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <elementReference>nextStageSortOrder</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Opportunity_Stage</targetReference>
+            </connector>
+            <label>Current Stage is Less Than Next Stage</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Get_Opportunity_Stages</name>
+        <label>Check Get Opportunity Stages</label>
+        <locationX>380</locationX>
+        <locationY>350</locationY>
+        <defaultConnectorLabel>Opp Stages Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Got_Opportunity_Stages</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Opportunity_Stages</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Filter_to_Current_Stage</targetReference>
+            </connector>
+            <label>Got Opportunity Stages</label>
+        </rules>
+    </decisions>
+    <description>Screen flow, record page. Upload letter of agreements, work orders, and purchase orders and update opportunity stage.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>strFmlDefaultDocName</name>
+        <dataType>String</dataType>
+        <expression>LEFT(
+CASE(
+  {!Input_DocumentType_Radio},
+  {!choiceLetterOfAgreement}, &quot;LOA &quot;,
+  {!choiceWorkOrder}, &quot;Work Order &quot;,
+  {!choicePurchaseOrder}, &quot;PO &quot;,
+  &quot;&quot;
+) &amp; 
+IF( 
+  !ISBLANK( {!recordId.Account.DBN__c} ), 
+  RIGHT( {!recordId.Account.DBN__c}, 3 ) &amp; MID( {!recordId.Account.DBN__c}, 3, 1) &amp; &quot; &quot;,
+  &quot;&quot;
+) &amp; 
+{!recordId.Account.Name}, 
+80
+)</expression>
+    </formulas>
+    <formulas>
+        <name>strFmlSelectedNextStage</name>
+        <dataType>String</dataType>
+        <expression>CASE(
+  {!Input_DocumentType_Radio},
+  {!choiceLetterOfAgreement}, &quot;Work Order&quot;,
+  {!choiceWorkOrder}, &quot;Purchase Order&quot;,
+  {!choicePurchaseOrder}, &quot;Billing&quot;,
+  &quot;&quot;
+)</expression>
+    </formulas>
+    <interviewLabel>Opportunity SFRP UploadCPDocuments {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Opportunity SFRP UploadCPDocuments</label>
+    <loops>
+        <name>Loop_through_Current_Stage</name>
+        <label>Loop through Current Stage</label>
+        <locationX>182</locationX>
+        <locationY>674</locationY>
+        <collectionReference>Filter_to_Current_Stage</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Set_Current_Stage_Sort_Order</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Loop_through_Selected_Next_Stages</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <loops>
+        <name>Loop_through_Selected_Next_Stages</name>
+        <label>Loop through Selected Next Stages</label>
+        <locationX>182</locationX>
+        <locationY>974</locationY>
+        <collectionReference>Filter_to_Selected_Next_Stage</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Set_Next_Stage_Sort_Order</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Check_for_Advanced_Progress</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_Opportunity_Stages</name>
+        <label>Get Opportunity Stages</label>
+        <locationX>380</locationX>
+        <locationY>242</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Get_Opportunity_Stages</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>IsActive</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>OpportunityStage</object>
+        <sortField>SortOrder</sortField>
+        <sortOrder>Asc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Opportunity_Stage</name>
+        <label>Update Opportunity Stage</label>
+        <locationX>50</locationX>
+        <locationY>1490</locationY>
+        <inputReference>recordId</inputReference>
+    </recordUpdates>
+    <screens>
+        <name>Upload_Files_Screen</name>
+        <label>Upload Files Screen</label>
+        <locationX>380</locationX>
+        <locationY>134</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Get_Opportunity_Stages</targetReference>
+        </connector>
+        <fields>
+            <name>Input_DocumentType_Radio</name>
+            <choiceReferences>choiceLetterOfAgreement</choiceReferences>
+            <choiceReferences>choiceWorkOrder</choiceReferences>
+            <choiceReferences>choicePurchaseOrder</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Document Type</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>FileUpload</name>
+            <extensionName>c:fileUploadImproved</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>required</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>cb_required</name>
+                <value>
+                    <stringValue>CB_TRUE</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>sessionKey</name>
+                <value>
+                    <elementReference>$Flow.InterviewGuid</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Upload Document</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>recordId</name>
+                <value>
+                    <elementReference>recordId.Id</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>acceptedFormats</name>
+                <value>
+                    <stringValue>.pdf</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>helpText</name>
+                <value>
+                    <stringValue>Upload a pdf version of the document</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>overriddenFileName</name>
+                <value>
+                    <elementReference>strFmlDefaultDocName</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>renderFilesBelow</name>
+                <value>
+                    <booleanValue>true</booleanValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>cb_renderFilesBelow</name>
+                <value>
+                    <stringValue>CB_TRUE</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>icon</name>
+                <value>
+                    <stringValue>standard:work_plan_template</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>uploadedlabel</name>
+                <value>
+                    <stringValue>Uploaded File</stringValue>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <start>
+        <locationX>254</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Upload_Files_Screen</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>currentItem_Filter_to_Current_Stage</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>OpportunityStage</objectType>
+    </variables>
+    <variables>
+        <name>currentItem_Filter_to_Selected_Next_Stage</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>OpportunityStage</objectType>
+    </variables>
+    <variables>
+        <name>curStageSortOrder</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>nextStageSortOrder</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>recordId</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Opportunity</objectType>
+    </variables>
+</Flow>
